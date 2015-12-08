@@ -12,10 +12,23 @@ def calculateGain(info_a, info_b):
     return gain
 
 def calculateEntropy(a,b):
-    p_a = float(a)/float(a+b)
-    p_b = float(b)/float(a+b)
-    log_a = math.log(p_a,2)
-    log_b = math.log(p_b,2)
+    if a + b == 0 or float(a) + float(b) == 0.0 or b == 0:
+        return 0
+
+    if a == 0 or float(a) == 0.0:
+        p_a = 0.0
+        log_a = 0.0
+    else:
+        p_a = float(a)/float(a+b)
+        log_a = math.log(p_a,2)
+
+    if b == 0 or float(b) == 0.0:
+        p_b = 0.0
+        log_b = 0.0
+    else:
+        p_b = float(b)/float(a+b)
+        log_b = math.log(p_b,2)
+
     entropy = -(p_a*log_a) - (p_b*log_b)
     return entropy
 
@@ -26,11 +39,11 @@ def loadData(path):
     print 'inside loadData, truths shape= ',extracted_truths.shape
     truths = np.zeros(shape=(len(extracted_truths),1))
     count = 0
-    for i in range(len(truths)):
+    for i in range(len(extracted_truths)):
+        truths[i,0] = extracted_truths[i]
 
-
-    truths = np.asanyarray(truths)
     matrix = np.delete(matrix,len(matrix[0])-1,axis=1)
+    print 'refactored shape of truths = ',truths.shape
     return matrix, truths
 
 def discretizeData(matrix):
@@ -56,12 +69,13 @@ def discretizeData(matrix):
     print 'len of truths = ',len(truths)
     return matrix
 
-def calculateColGains(matrix):
+def calculateColGains(matrix,truths):
     '''
-    calculateColGains() calculates gains for each column (that is, each feature)
-    and returns a list of gains. each index represents a feature for which the gain is calculated.
+    calculateColGains() takes the matrix and the truths and calculates gains for each column
+    (that is, each feature) and returns a list of gains. each index represents a feature
+    for which the gain is calculated.
     '''
-    truths = matrix[:,len(matrix[0])-1]
+    # truths = matrix[:,len(matrix[0])-1]
     matrix = np.delete(matrix,len(matrix[0])-1,axis=1)
     total_entropy = calculateEntropy(list(truths).count(0), list(truths).count(1))
     gains_list = [ ]
@@ -84,7 +98,8 @@ def calculateColGains(matrix):
 
             gain = gain + float(priori) * float(feature_entropy)
 
-        gains_list[j] = float(total_entropy) - float(gain)
+        gains_list.insert(j,(float(total_entropy) - float(gain)))
+        j = j + 1
 
     return gains_list
 
@@ -105,12 +120,10 @@ def generateFeatureMap(feature_list,labels):
         feature_map[i] = (0,0)
 
     j = 0
-
     for each in feature_set:
         count0 = 0
         count1 = 0
         for k in range(len(feature_list)):
-            print 'labels shape = ',labels.shape
             if feature_list[k] == each and labels[k,0] == 0:
                 count0 = count0 + 1
             elif feature_list[k] == each and labels[k,0] == 1:
@@ -139,9 +152,10 @@ if __name__ == '__main__':
     print total_entropy
 
     '''pass the matrix to calculate all gains, to determine which feature is the root'''
-    gains_list = calculateColGains(matrix)
+    gains_list = calculateColGains(matrix,truths)
 
-    # print gains_list.index(max(gains_list))
+    print gains_list.index(max(gains_list))
+    print 'second root = ', gains_list.index(sorted(gains_list)[1])
 
 
 
