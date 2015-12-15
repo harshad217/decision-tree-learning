@@ -1,3 +1,3 @@
 # decision-tree-learning
 
-Implementation of Decision Tree and Random Forest Classification Technique.
+Implementation of Decision Tree and Random Forest Classification Techniques.
