@@ -2,7 +2,7 @@ __author__ = 'harshad'
 
 ''''
 About script:
-    Experimenting with different inbuilt classfication techniques of Sklearn and using ensemble methods
+    Experimenting with different inbuilt classfication techniques of Sklearn, using ensemble methods
     to work on a dataset consisting very few samples and a large number of features
 '''
 
